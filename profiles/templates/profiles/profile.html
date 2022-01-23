@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+	
+{% block head %}
+<title>Profile</title>
+{% endblock %}
+
+
+{% block body %}
+<div class="container">
+
+			{% if messages %}
+			<ul class="messages">
+			    {% for message in messages %}
+			    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+			    {% endfor %}
+			</ul>
+			{% endif %}
+
+<div class="row">
+	<div class="col-md-4">
+		<div class="card gedf-card" style="border: none;">
+			<div class="card-header" id="post-header">
+			{% if user.userprofile.avatar %}
+	        	<a href="{{ user.userprofile.avatar.url }}" target="_blank">
+	        		<img class="rounded" src="{{ user.userprofile.avatar_profile.url }}">
+	        	</a>
+	        {% else %}
+	        	<img class="rounded" width="165" src="/media/profile_image/default.png" alt="">
+	        	<br/>
+	        {% endif %}
+
+			<h2>{{ user.get_full_name }}</h2>
+			<h6>@{{ user }}</h6>
+			<br/>
+
+			<p><i>{{ user.userprofile.description }}</i></p>
+			<p><!-- City:  --><i class="fas fa-map-marker-alt"></i> - {{ user.userprofile.city }}</p>
+			<p><!-- Website:  --><i class="fas fa-link"></i> -  <a href="{{ user.userprofile.website }}" target="_blank">{{ user.userprofile.website }}</a></p>
+
+			{% if user == request.user %}
+			<a href="{% url 'profiles:edit_profile' %}">
+				<button class='btn btn-primary'>Edit Profile</button>
+			</a>
+			{% endif %}
+
+
+		<hr/>
+				<div id="profile_links">
+					<div>
+						<a href="{% url 'profiles:view_profile_with_pk' pk=user.pk %}"><i class="far fa-sticky-note fa-fw"></i> Posts</a>
+					</div>
+			        
+			        <div>
+			        	{% url 'profiles:view_profile_photos_with_pk' pk=user.pk as photos_url %}
+			        	<a href="{{ photos_url }}"><i class="fas fa-images fa-fw"></i> Photos</a>
+			        </div>
+
+			     	<div>
+			        	{% url 'profiles:view_profile_videos_with_pk' pk=user.pk as videos_url %}
+			        	<a href="{{ videos_url }}"><i class="fab fa-youtube fa-fw"></i> Videos</a>
+			        </div>
+
+			        <div>
+			        	{% url 'profiles:view_profile_friends_with_pk' pk=user.pk as friends_url %}
+			        	<a href="{{ friends_url }}"><i class="fa fa-user-friends fa-fw"></i> Friends</a>
+			        </div>
+
+
+			</div>
+		</div>
+	</div>
+</div>
+
+{% url 'profiles:photo_detail' pk=photo.pk as photo_detail_url %}
+
+{% if request.get_full_path == friends_url %}
+	{% include 'profiles/profile_friends.html' %}
+
+{% elif request.get_full_path == photos_url %}
+	{% include 'profiles/profile_photos.html' %}
+
+{% elif request.get_full_path == photo_detail_url %}
+	{% include 'profiles/photo_detail.html' %}
+
+{% elif request.get_full_path == videos_url %}
+	{% include 'profiles/profile_videos.html' %}
+
+{% else %}
+	{% include 'profiles/profile_posts.html' %}
+
+{% endif %}
+		
+</div>
+</div>
+
+{% endblock %}

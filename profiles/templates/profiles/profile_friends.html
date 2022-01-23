@@ -1,0 +1,69 @@
+<div class="col-md-8">
+			<h3>{{ user.first_name }}'s Friends</h3>
+			<ul class="list-group" id="people">
+				{% for friend in friends_pk %}
+					<div class="list-group-item">
+				        <div class="d-flex justify-content-between align-items-center">
+				            <div class="d-flex justify-content-between align-items-center">
+				                <div class="mr-2">
+				    				{% if friend.userprofile.avatar %}
+					                <img class="rounded" width="65" height="65" src="{{ friend.userprofile.avatar_profile.url }}" alt="">
+					                {% else %}
+					                <img class="rounded" width="65" src="/media/profile_image/default.png" alt="">
+					                {% endif %}
+				                </div>
+
+				                <div class="ml-2">
+				                    <div class="h5 m-0"><a href="{% url 'profiles:view_profile_with_pk' pk=friend.pk %}">{{ friend.get_full_name }}</a></div>
+				                    <!-- <div class="h7 text-muted"></div> -->
+				                    <div class="text-muted h7 mb-2">@{{ friend }}</div>
+				                </div>
+
+				            </div>
+
+				                	
+				             	<div class="user-interaction-btns">
+				             		{% if friend == request.user %}
+
+				             		{% elif not friend in friends_user %}
+				                	<a href="{% url 'people:change_friends' operation='add' pk=friend.pk %}">
+										<button type="button" class="btn btn-success">Add friend</button>
+									</a>
+									<a href="#">
+										<button type="button" class="btn btn-primary">Message</button>
+									</a>
+
+									{% elif friend.pk in received_requests %}
+				                	<a href="{% url 'people:request_response' operation='accept' pk=friend.pk %}">
+										<button type="button" class="btn btn-success">Accept</button>
+									</a>
+				             		<a href="{% url 'people:request_response' operation='reject' pk=friend.pk %}">
+										<button type="button" class="btn btn-danger">Decline</button>
+									</a>
+									
+				             		{% elif friend.pk in sent_requests %}
+				             		<a href="{% url 'people:request_response' operation='cancel' pk=friend.pk %}">
+										<button type="button" id='pending-btn' class="btn btn-primary">Pending</button>
+									</a>
+
+									{% elif friend in friends_user %}
+									<a href="{% url 'people:change_friends' operation='remove' pk=friend.pk %}">
+										<button type="button" class="btn btn-danger">Remove Friend</button>
+									</a>
+
+									<a href="#">
+										<button type="button" class="btn btn-primary">Message</button>
+									</a>
+									{% endif %}
+
+				                </div>
+
+				        </div>
+					</div>
+				{% empty %}
+					<p>No friends to show</p>
+				{% endfor %}
+
+			</ul>
+</div>
+
